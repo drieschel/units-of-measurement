@@ -1,0 +1,28 @@
+{
+    "name": "drieschel/units-of-measure",
+    "type": "library",
+    "description": "A helper library for measure units",
+    "license": "MIT",
+    "authors": [{
+        "name": "Immanuel Klinkenberg",
+        "email": "hello@immanuel-klinkenberg.de",
+        "role": "Author"
+    }],
+    "require": {
+        "php": ">=7.2"
+    },
+    "require-dev": {
+        "friendsofphp/php-cs-fixer": "^2.15",
+        "phpunit/phpunit": "^9.1"
+    },
+    "autoload": {
+        "psr-4": {
+            "Drieschel\\UnitsOfMeasurement\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Drieschel\\UnitsOfMeasurement\\": "tests/src"
+        }
+    }
+}
