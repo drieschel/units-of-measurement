@@ -18,7 +18,7 @@ class SiPrefixConverter
      * SiPrefixValueConverter constructor.
      * @param UnitCollection|null $units
      * @param SiPrefixCollection|null $prefixes
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function __construct(UnitCollection $units = null, SiPrefixCollection $prefixes = null)
     {
@@ -59,7 +59,7 @@ class SiPrefixConverter
      * @param string $toPrefixSymbol
      * @param float $value
      * @return float
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function convertByPrefixSymbol(string $fromPrefixSymbol, string $toPrefixSymbol, float $value): float
     {
@@ -71,7 +71,7 @@ class SiPrefixConverter
      * @param string $toPrefixSymbol
      * @param float $value
      * @return float
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      * @throws ConverterException
      */
     public function convertByUnitSymbol(string $fromUnitSymbol, string $toPrefixSymbol, float $value): float
@@ -82,7 +82,7 @@ class SiPrefixConverter
     /**
      * @param string $unitSymbol
      * @return SiPrefix
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      * @throws ConverterException
      */
     public function findPrefixByUnitSymbol(string $unitSymbol): SiPrefix
@@ -95,7 +95,7 @@ class SiPrefixConverter
 
         $unit = null;
         $prefixSymbol = null;
-        for($i = 0; $i < $unitSymbolLength; $i++) {
+        for($i = 0; $i < $unitSymbolLength && $i < 3; $i++) {
             if($this->units->has(substr($unitSymbol, $i))) {
                 $unit = $this->units->get(substr($unitSymbol, $i));
                 $prefixSymbol = substr($unitSymbol, 0, $i);

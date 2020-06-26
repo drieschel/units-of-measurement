@@ -15,7 +15,7 @@ class AbstractComponent implements ComponentInterface
     protected $symbols = [];
 
     /**
-     * Unit constructor.
+     * AbstractComponent constructor.
      * @param string $name
      * @param string $symbol
      */

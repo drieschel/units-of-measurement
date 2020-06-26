@@ -37,21 +37,21 @@ class Unit extends AbstractComponent
     }
 
     /**
-     * @param float $nonSiValue
+     * @param float $value
      * @return float
      */
-    public function convertValueToSi(float $nonSiValue): float
+    public function convertToSi(float $value): float
     {
-        return $nonSiValue * $this->siConversionFactor;
+        return $value * $this->unitExpression->getFactor();
     }
 
     /**
-     * @param float $siValue
+     * @param float $value
      * @return float
      */
-    public function convertValueFromSi(float $siValue): float
+    public function convertFromSi(float $value): float
     {
-        return $siValue / $this->siConversionFactor;
+        return $value / $this->unitExpression->getFactor();
     }
 
     /**

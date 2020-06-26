@@ -3,9 +3,9 @@ namespace Drieschel\UnitsOfMeasurement;
 
 class PhysicalQuantityCollection extends ComponentCollection
 {
-    public static function create(): self
+    public static function create(bool $createUnits = false): self
     {
-        return (new static())
+        $quantities = (new static())
             ->set(new PhysicalQuantity('length', 'l', 'L', true))
             ->set(new PhysicalQuantity('mass', 'm', 'M', true))
             ->set(new PhysicalQuantity('time', 't', 'T', true))
@@ -18,5 +18,11 @@ class PhysicalQuantityCollection extends ComponentCollection
             ->set(new PhysicalQuantity('frequency', 'f', 'T⁻¹'))
             ->set(new PhysicalQuantity('molar concentration', 'C', 'L⁻³ N'))
         ;
+
+        if($createUnits) {
+            UnitCollection::create($quantities);
+        }
+
+        return $quantities;
     }
 }

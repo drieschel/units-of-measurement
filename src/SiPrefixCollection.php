@@ -6,19 +6,19 @@ class SiPrefixCollection extends ComponentCollection
     /**
      * @param string $symbol
      * @return float
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function getFactor(string $symbol): float
     {
         if (!$this->has($symbol)) {
-            throw ComponentCollectionException::unknownSymbol($symbol);
+            throw CollectionException::symbolUnknown($symbol);
         }
-        return $this->prefixes[$this->normalizeSymbol($symbol)]->getFactor();
+        return $this->get($symbol)->getFactor();
     }
 
     /**
      * @return SiPrefixCollection
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public static function create(): self
     {

@@ -6,10 +6,9 @@ use PHPUnit\Framework\TestCase;
 
 class ComponentCollectionTest extends TestCase
 {
-
     /**
      * @param array $components
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function testCount(AbstractComponent ...$components)
     {
@@ -23,7 +22,7 @@ class ComponentCollectionTest extends TestCase
      *
      * @param array $indexedBySymbols
      * @param AbstractComponent ...$components
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function testCurrent(array $indexedBySymbols, AbstractComponent ...$components)
     {
@@ -38,7 +37,7 @@ class ComponentCollectionTest extends TestCase
      * @dataProvider componentsProvider
      *
      * @param AbstractComponent ...$components
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function testHas(AbstractComponent ...$components)
     {
@@ -53,7 +52,7 @@ class ComponentCollectionTest extends TestCase
      * @dataProvider componentsProvider
      *
      * @param AbstractComponent ...$components
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function testMerge(AbstractComponent ...$components)
     {
@@ -69,7 +68,7 @@ class ComponentCollectionTest extends TestCase
      * @dataProvider componentsProvider
      *
      * @param AbstractComponent ...$components
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function testSet(AbstractComponent ...$components)
     {
@@ -106,8 +105,8 @@ class ComponentCollectionTest extends TestCase
 
     public function testSetSymbolExists()
     {
-        $this->expectException(ComponentCollectionException::class);
-        $this->expectExceptionCode(ComponentCollectionException::EXISTING_SYMBOL);
+        $this->expectException(CollectionException::class);
+        $this->expectExceptionCode(CollectionException::SYMBOL_EXISTS);
         $collection = new ComponentCollection();
         $symbol = uniqid('symbolix-');
         $component1 = $this->getMockForAbstractClass(AbstractComponent::class, ['name1', $symbol]);
@@ -119,7 +118,7 @@ class ComponentCollectionTest extends TestCase
      * @dataProvider componentsProvider
      *
      * @param AbstractComponent ...$components
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function testValid(AbstractComponent ...$components)
     {
@@ -136,7 +135,7 @@ class ComponentCollectionTest extends TestCase
      * @dataProvider componentsProvider
      *
      * @param AbstractComponent ...$components
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function testFilterByClosure(AbstractComponent ...$components)
     {
@@ -168,12 +167,13 @@ class ComponentCollectionTest extends TestCase
      *
      * @param array $sortedBySymbols
      * @param AbstractComponent ...$components
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function testRewind(array $sortedBySymbols, AbstractComponent ...$components)
     {
+        $sortedSymbolsCnt = count($sortedBySymbols);
         $collection = new ComponentCollection(...$components);
-        $stepUntil = mt_rand(1, count($sortedBySymbols) - 1);
+        $stepUntil = $sortedSymbolsCnt > 1 ? mt_rand(1, $sortedSymbolsCnt - 1) : 1;
         for($i = 0; $i < $stepUntil; $i++, $collection->next()) {
         }
         $this->assertNotEquals($components[0], $collection->current());
@@ -185,7 +185,7 @@ class ComponentCollectionTest extends TestCase
      * @dataProvider componentsProvider
      *
      * @param AbstractComponent ...$components
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function testGet(AbstractComponent ...$components)
     {
@@ -199,8 +199,8 @@ class ComponentCollectionTest extends TestCase
 
     public function testGetSymbolNotFound()
     {
-        $this->expectException(ComponentCollectionException::class);
-        $this->expectExceptionCode(ComponentCollectionException::UNKNOWN_SYMBOL);
+        $this->expectException(CollectionException::class);
+        $this->expectExceptionCode(CollectionException::SYMBOL_UNKNOWN);
         $collection = new ComponentCollection();
         $collection->get(uniqid('symboliax'));
     }
@@ -209,7 +209,7 @@ class ComponentCollectionTest extends TestCase
      * @dataProvider componentsProvider
      *
      * @param AbstractComponent ...$components
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function testKey(AbstractComponent ...$components)
     {
@@ -227,7 +227,7 @@ class ComponentCollectionTest extends TestCase
      *
      * @param array $sortedBySymbols
      * @param AbstractComponent ...$components
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function testNext(array $sortedBySymbols, AbstractComponent ...$components)
     {
@@ -235,6 +235,82 @@ class ComponentCollectionTest extends TestCase
         foreach($sortedBySymbols as $component) {
             $this->assertEquals($component, $collection->current());
             $collection->next();
+        }
+    }
+
+    /**
+     * @dataProvider componentsProvider
+     *
+     * @param AbstractComponent ...$components
+     * @throws CollectionException
+     */
+    public function testOffsetExists(AbstractComponent ...$components)
+    {
+        $collection = new ComponentCollection(...$components);
+        foreach ($components as $component) {
+            $this->assertTrue($collection->offsetExists($component->getSymbol()));
+            $this->assertFalse($collection->offsetExists($component->getName()));
+        }
+    }
+
+    /**
+     * @dataProvider componentsProvider
+     *
+     * @param AbstractComponent ...$components
+     * @throws CollectionException
+     */
+    public function testOffsetGet(AbstractComponent ...$components)
+    {
+        $collection = new ComponentCollection(...$components);
+        foreach($components as $component) {
+            foreach($component->getSymbols() as $symbol) {
+                $this->assertEquals($component, $collection->offsetGet($symbol));
+            }
+        }
+    }
+
+    /**
+     * @dataProvider componentsProvider
+     *
+     * @param AbstractComponent[] $components
+     * @return void
+     * @throws CollectionException
+     * @throws \ReflectionException
+     */
+    public function testOffsetSetDoesNotDoAnything(AbstractComponent ...$components)
+    {
+        $collection = new ComponentCollection(...$components);
+        $reflClass = new \ReflectionClass($collection);
+        $reflComponents = $reflClass->getProperty('components');
+        $reflComponents->setAccessible(true);
+        foreach($components as $component) {
+            foreach($component->getSymbols() as $offset) {
+                $collection->offsetSet($offset, 'wtf');
+                $components = $reflComponents->getValue($collection);
+                $this->assertEquals($components[$offset], $component);
+            }
+        }
+    }
+
+    /**
+     * @dataProvider componentsProvider
+     *
+     * @param AbstractComponent ...$components
+     * @throws CollectionException
+     * @throws \ReflectionException
+     */
+    public function testOffsetUnsetDoesNotDoAnything(AbstractComponent ...$components): void
+    {
+        $collection = new ComponentCollection(...$components);
+        $reflClass = new \ReflectionClass($collection);
+        $reflComponents = $reflClass->getProperty('components');
+        $reflComponents->setAccessible(true);
+        foreach($components as $component) {
+            foreach($component->getSymbols() as $offset) {
+                $collection->offsetUnset($offset);
+                $components = $reflComponents->getValue($collection);
+                $this->assertEquals($components[$offset], $component);
+            }
         }
     }
 

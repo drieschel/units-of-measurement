@@ -17,12 +17,18 @@ class UnitExpression
     /**
      * UnitExpression constructor.
      * @param float $factor
-     * @param SiBaseUnitTerm ...$terms
+     * @param SiBaseUnitTerm $firstTerm
+     * @param SiBaseUnitTerm ...$moreTerms
+     * @throws UnitExpressionException
      */
-    public function __construct(float $factor = 1., SiBaseUnitTerm ...$terms)
+    public function __construct(float $factor = 1., SiBaseUnitTerm $firstTerm, SiBaseUnitTerm ...$moreTerms)
     {
+        if($factor === 0.) {
+            throw UnitExpressionException::invalidFactor($factor);
+        }
+
         $this->factor = $factor;
-        $this->terms = $terms;
+        $this->terms = array_merge([$firstTerm], $moreTerms);
     }
 
     /**

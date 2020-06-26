@@ -48,6 +48,7 @@ class SiBaseUnitTerm
     public function isCompatibleWith(SiBaseUnitTerm $unitTerm): bool
     {
         return $this->baseUnit->getSymbol() === $unitTerm->baseUnit->getSymbol()
+            && $this->baseUnit->getPhysicalQuantity()->getSymbol() === $unitTerm->getBaseUnit()->getPhysicalQuantity()->getSymbol()
             && $this->exponent === $unitTerm->exponent;
     }
 

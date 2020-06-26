@@ -2,7 +2,7 @@
 
 namespace Drieschel\UnitsOfMeasurement;
 
-class ComponentCollection implements \Iterator, \Countable
+class ComponentCollection implements \Iterator, \Countable, \ArrayAccess
 {
     /**
      * @var ComponentInterface[]
@@ -12,7 +12,7 @@ class ComponentCollection implements \Iterator, \Countable
     /**
      * ComponentCollection constructor.
      * @param ComponentInterface ...$components
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function __construct(ComponentInterface ...$components)
     {
@@ -41,7 +41,7 @@ class ComponentCollection implements \Iterator, \Countable
     /**
      * @param \Closure $closure
      * @return ComponentCollection
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function filterByClosure(\Closure $closure): self
     {
@@ -51,12 +51,12 @@ class ComponentCollection implements \Iterator, \Countable
     /**
      * @param string $symbol
      * @return ComponentInterface
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function get(string $symbol): ComponentInterface
     {
         if (!$this->has($symbol)) {
-            throw ComponentCollectionException::unknownSymbol($symbol);
+            throw CollectionException::symbolUnknown($symbol);
         }
         return $this->components[$this->normalizeSymbol($symbol)];
     }
@@ -81,7 +81,7 @@ class ComponentCollection implements \Iterator, \Countable
     /**
      * @param ComponentCollection $collection
      * @return ComponentCollection
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function merge(ComponentCollection $collection): self
     {
@@ -100,6 +100,44 @@ class ComponentCollection implements \Iterator, \Countable
     }
 
     /**
+     * @param mixed $symbol
+     * @return boolean
+     */
+    public function offsetExists($symbol): bool
+    {
+        return $this->has($symbol);
+    }
+
+    /**
+     * @param string $symbol
+     * @return ComponentInterface
+     * @throws CollectionException
+     */
+    public function offsetGet($symbol): ComponentInterface
+    {
+        return $this->get($symbol);
+    }
+
+    /**
+     * @param mixed $offset
+     * @param mixed $value
+     * @return void
+     */
+    public function offsetSet($offset, $value): void
+    {
+        //Array has to be readable only
+    }
+
+    /**
+     * @param mixed $offset
+     * @return void
+     */
+    public function offsetUnset($offset): void
+    {
+        //Array has to be readable only
+    }
+
+    /**
      * @return void
      */
     public function rewind(): void
@@ -110,7 +148,7 @@ class ComponentCollection implements \Iterator, \Countable
     /**
      * @param ComponentInterface $component
      * @return $this
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function set(ComponentInterface $component): self
     {
@@ -121,7 +159,7 @@ class ComponentCollection implements \Iterator, \Countable
 
         foreach ($symbols as $symbol) {
             if ($this->has($symbol)) {
-                throw ComponentCollectionException::existingSymbol($symbol);
+                throw CollectionException::symbolExists($symbol);
             }
             $this->components[$this->normalizeSymbol($symbol)] = $component;
         }

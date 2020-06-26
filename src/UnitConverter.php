@@ -23,7 +23,7 @@ class UnitConverter
      * UnitConverter constructor.
      * @param UnitCollection|null $units
      * @param SiPrefixCollection|null $prefixes
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function __construct(UnitCollection $units = null, SiPrefixCollection $prefixes = null)
     {
@@ -53,7 +53,7 @@ class UnitConverter
             throw ConverterException::incompatibleUnits($fromUnit, $toUnit);
         }
 
-        return $fromUnit->getUnitExpression()->getFactor() * $value / $toUnit->getUnitExpression()->getFactor();
+        return $toUnit->convertFromSi($fromUnit->convertToSi($value));
     }
 
     /**
@@ -61,7 +61,7 @@ class UnitConverter
      * @param string $toUnitSymbol
      * @param float $value
      * @return float
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      * @throws ConverterException
      * @throws \Exception
      */
@@ -80,7 +80,8 @@ class UnitConverter
     /**
      * @param string $unitSymbol
      * @return float
-     * @throws \Exception
+     * @throws CollectionException
+     * @throws ConverterException
      */
     protected function getConversionFactorBySymbol(string $unitSymbol): float
     {
@@ -97,7 +98,7 @@ class UnitConverter
     /**
      * @param string $unitSymbol
      * @return Unit
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      * @throws ConverterException
      */
     public function findUnitBySymbol(string $unitSymbol): Unit

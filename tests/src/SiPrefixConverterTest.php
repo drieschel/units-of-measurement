@@ -4,7 +4,7 @@ namespace Drieschel\UnitsOfMeasurement;
 
 use PHPUnit\Framework\TestCase;
 
-class SiPrefixValueConverterTest extends TestCase
+class SiPrefixConverterTest extends TestCase
 {
     /**
      * @dataProvider convertByPrefixSymbolsProvider
@@ -13,12 +13,12 @@ class SiPrefixValueConverterTest extends TestCase
      * @param string $toPrefix
      * @param float $value
      * @param float $expectedResult
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function testConvert(string $fromPrefix, string $toPrefix, float $value, float $expectedResult)
     {
         $prefixes = SiPrefixCollection::create();
-        $converter = new SiPrefixConverter($prefixes);
+        $converter = new SiPrefixConverter(null, $prefixes);
         $fromPrefix = $prefixes->get($fromPrefix);
         $toPrefix = $prefixes->get($toPrefix);
         $result = $converter->convert($fromPrefix, $toPrefix, $value);
@@ -32,7 +32,7 @@ class SiPrefixValueConverterTest extends TestCase
      * @param string $toPrefixSymbol
      * @param float $value
      * @param float $result
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      */
     public function testConvertByPrefixSymbol(string $fromPrefixSymbol, string $toPrefixSymbol, float $value, float $result)
     {
@@ -47,7 +47,7 @@ class SiPrefixValueConverterTest extends TestCase
      * @param string $toPrefixSymbol
      * @param float $value
      * @param float $result
-     * @throws ComponentCollectionException|ConverterException
+     * @throws CollectionException|ConverterException
      */
     public function testConvertByUnitSymbol(string $fromUnitSymbol, string $toPrefixSymbol, float $value, float $result)
     {
@@ -60,7 +60,7 @@ class SiPrefixValueConverterTest extends TestCase
      *
      * @param string $unitSymbol
      * @param string $expectedPrefixSymbol
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      * @throws ConverterException
      */
     public function testFindPrefixByUnitSymbol(string $unitSymbol, string $expectedPrefixSymbol)
@@ -74,7 +74,7 @@ class SiPrefixValueConverterTest extends TestCase
      * @dataProvider unknownUnitsDataProvider
      *
      * @param string $unknownUnitSymbol
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      * @throws ConverterException
      */
     public function testFindPrefixByUnitSymbolUnknownUnitSymbol(string $unknownUnitSymbol)
@@ -95,7 +95,7 @@ class SiPrefixValueConverterTest extends TestCase
      * @dataProvider unknownPrefixesDataProvider
      *
      * @param string $unitSymbolWithUnknownPrefix
-     * @throws ComponentCollectionException
+     * @throws CollectionException
      * @throws ConverterException
      */
     public function testFindPrefixByUnitSymbolUnknownPrefixSymbol(string $unitSymbolWithUnknownPrefix)

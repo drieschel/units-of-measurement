@@ -1,11 +1,11 @@
 {
-    "name": "drieschel/units-of-measure",
+    "name": "drieschel/units-of-measurement",
     "type": "library",
     "description": "A helper library for measure units",
     "license": "MIT",
     "authors": [{
         "name": "Immanuel Klinkenberg",
-        "email": "hello@immanuel-klinkenberg.de",
+        "email": "drieschel@yahoo.de",
         "role": "Author"
     }],
     "require": {
