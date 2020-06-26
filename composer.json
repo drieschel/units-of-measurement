@@ -1,7 +1,7 @@
 {
     "name": "drieschel/units-of-measurement",
     "type": "library",
-    "description": "A helper library for measure units",
+    "description": "Drieschel's Units of Measurement",
     "license": "MIT",
     "authors": [{
         "name": "Immanuel Klinkenberg",
