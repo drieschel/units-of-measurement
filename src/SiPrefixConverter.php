@@ -27,7 +27,7 @@ class SiPrefixConverter
         }
 
         if (is_null($units)) {
-            $units = UnitCollection::create();
+            $units = UnitCollection::createAllUnits();
         }
 
         $this->prefixes = $prefixes;

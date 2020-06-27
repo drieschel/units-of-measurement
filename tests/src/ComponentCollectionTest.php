@@ -2,19 +2,23 @@
 
 namespace Drieschel\UnitsOfMeasurement;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ComponentCollectionTest extends TestCase
 {
     /**
-     * @param array $components
+     * @dataProvider symbolsIndexedComponentsProvider
+     *
+     * @param array $indexedBySymbols
+     * @param AbstractComponent ...$components
      * @throws CollectionException
      */
-    public function testCount(AbstractComponent ...$components)
+    public function testCount(array $indexedBySymbols, AbstractComponent ...$components)
     {
-        $expected = count($components);
+        $indexedBySymbolsCnt = count($indexedBySymbols);
         $collection = new ComponentCollection(...$components);
-        $this->assertEquals($expected, $collection->count());
+        $this->assertEquals($indexedBySymbolsCnt, $collection->count());
     }
 
     /**
@@ -49,19 +53,22 @@ class ComponentCollectionTest extends TestCase
     }
 
     /**
-     * @dataProvider componentsProvider
+     * @dataProvider symbolsIndexedComponentsProvider
      *
+     * @param array $indexedBySymbols
      * @param AbstractComponent ...$components
      * @throws CollectionException
      */
-    public function testMerge(AbstractComponent ...$components)
+    public function testMerge(array $indexedBySymbols, AbstractComponent ...$components)
     {
-        $firstCollection = new ComponentCollection();
+        $firstCollection = new ComponentCollection(...$this->componentsProvider('yalla', 1)[0]);
+        $firstColCntBeforeMerge = $firstCollection->count();
         $secondCollection = new ComponentCollection(...$components);
         $firstCollection->merge($secondCollection);
         foreach ($components as $component) {
             $this->assertTrue($firstCollection->has($component->getSymbol()));
         }
+        $this->assertEquals($secondCollection->count() + $firstColCntBeforeMerge, $firstCollection->count());
     }
 
     /**
@@ -115,16 +122,17 @@ class ComponentCollectionTest extends TestCase
     }
 
     /**
-     * @dataProvider componentsProvider
+     * @dataProvider symbolsIndexedComponentsProvider
      *
+     * @param array $indexedBySymbols
      * @param AbstractComponent ...$components
      * @throws CollectionException
      */
-    public function testValid(AbstractComponent ...$components)
+    public function testValid(array $indexedBySymbols, AbstractComponent ...$components)
     {
-        $componentsCount = count($components);
+        $indexedBySymbolsCnt = count($indexedBySymbols);
         $collection = new ComponentCollection(...$components);
-        for ($i = 0; $i < $componentsCount; $i++) {
+        for ($i = 0; $i < $indexedBySymbolsCnt; $i++) {
             $this->assertTrue($collection->valid());
             $collection->next();
         }
@@ -142,7 +150,7 @@ class ComponentCollectionTest extends TestCase
         $max = mt_rand(1, 20);
         /** @var AbstractComponent[] $componentsToFilter */
         $componentsToFilter = [];
-        for($i = 0; $i < $max; $i++) {
+        for ($i = 0; $i < $max; $i++) {
             $componentsToFilter[] = $this->getMockForAbstractClass(AbstractComponent::class, [uniqid('name-'), uniqid('foobar-')]);
         }
 
@@ -151,7 +159,7 @@ class ComponentCollectionTest extends TestCase
 
         $collection = new ComponentCollection(...$allComponents);
 
-        $closure = function(AbstractComponent $component) {
+        $closure = function (AbstractComponent $component) {
             return substr($component->getSymbol(), 0, 6) === 'foobar';
         };
 
@@ -165,20 +173,22 @@ class ComponentCollectionTest extends TestCase
     /**
      * @dataProvider symbolsIndexedComponentsProvider
      *
-     * @param array $sortedBySymbols
+     * @param array $indexedBySymbols
      * @param AbstractComponent ...$components
      * @throws CollectionException
      */
-    public function testRewind(array $sortedBySymbols, AbstractComponent ...$components)
+    public function testRewind(array $indexedBySymbols, AbstractComponent ...$components)
     {
-        $sortedSymbolsCnt = count($sortedBySymbols);
+        $indexedBySymbolsCnt = count($indexedBySymbols);
         $collection = new ComponentCollection(...$components);
-        $stepUntil = $sortedSymbolsCnt > 1 ? mt_rand(1, $sortedSymbolsCnt - 1) : 1;
-        for($i = 0; $i < $stepUntil; $i++, $collection->next()) {
+        $stepUntil = $indexedBySymbolsCnt > 0 ? mt_rand(0, $indexedBySymbolsCnt - 1) : 0;
+        $firstSymbol = array_key_first($indexedBySymbols);
+        for ($i = 0; $i < $stepUntil; $i++) {
+            $collection->next();
+            $this->assertNotEquals($firstSymbol, $collection->key());
         }
-        $this->assertNotEquals($components[0], $collection->current());
         $collection->rewind();
-        $this->assertEquals($components[0], $collection->current());
+        $this->assertEquals($firstSymbol, $collection->key());
     }
 
     /**
@@ -190,8 +200,8 @@ class ComponentCollectionTest extends TestCase
     public function testGet(AbstractComponent ...$components)
     {
         $collection = new ComponentCollection(...$components);
-        foreach($components as $component) {
-            foreach($component->getSymbols() as $symbol) {
+        foreach ($components as $component) {
+            foreach ($component->getSymbols() as $symbol) {
                 $this->assertEquals($component, $collection->get($symbol));
             }
         }
@@ -214,8 +224,8 @@ class ComponentCollectionTest extends TestCase
     public function testKey(AbstractComponent ...$components)
     {
         $collection = new ComponentCollection(...$components);
-        foreach($components as $component) {
-            foreach($component->getSymbols() as $symbol) {
+        foreach ($components as $component) {
+            foreach ($component->getSymbols() as $symbol) {
                 $this->assertEquals($symbol, $collection->key());
                 $collection->next();
             }
@@ -232,7 +242,7 @@ class ComponentCollectionTest extends TestCase
     public function testNext(array $sortedBySymbols, AbstractComponent ...$components)
     {
         $collection = new ComponentCollection(...$components);
-        foreach($sortedBySymbols as $component) {
+        foreach ($sortedBySymbols as $component) {
             $this->assertEquals($component, $collection->current());
             $collection->next();
         }
@@ -262,8 +272,8 @@ class ComponentCollectionTest extends TestCase
     public function testOffsetGet(AbstractComponent ...$components)
     {
         $collection = new ComponentCollection(...$components);
-        foreach($components as $component) {
-            foreach($component->getSymbols() as $symbol) {
+        foreach ($components as $component) {
+            foreach ($component->getSymbols() as $symbol) {
                 $this->assertEquals($component, $collection->offsetGet($symbol));
             }
         }
@@ -283,8 +293,8 @@ class ComponentCollectionTest extends TestCase
         $reflClass = new \ReflectionClass($collection);
         $reflComponents = $reflClass->getProperty('components');
         $reflComponents->setAccessible(true);
-        foreach($components as $component) {
-            foreach($component->getSymbols() as $offset) {
+        foreach ($components as $component) {
+            foreach ($component->getSymbols() as $offset) {
                 $collection->offsetSet($offset, 'wtf');
                 $components = $reflComponents->getValue($collection);
                 $this->assertEquals($components[$offset], $component);
@@ -305,8 +315,8 @@ class ComponentCollectionTest extends TestCase
         $reflClass = new \ReflectionClass($collection);
         $reflComponents = $reflClass->getProperty('components');
         $reflComponents->setAccessible(true);
-        foreach($components as $component) {
-            foreach($component->getSymbols() as $offset) {
+        foreach ($components as $component) {
+            foreach ($component->getSymbols() as $offset) {
                 $collection->offsetUnset($offset);
                 $components = $reflComponents->getValue($collection);
                 $this->assertEquals($components[$offset], $component);
@@ -315,29 +325,46 @@ class ComponentCollectionTest extends TestCase
     }
 
     /**
-     * @return AbstractComponent[]
+     * @dataProvider componentsProvider
      */
-    public function componentsProvider(): array
+    public function testToArray(AbstractComponent ...$components)
     {
+        $collection = new ComponentCollection(...$components);
+        $this->assertEquals($components, $collection->toArray());
+    }
+
+    /**
+     * @param string $testMethodName
+     * @param int $rows
+     * @return array
+     */
+    public function componentsProvider(string $testMethodName = 'yolo', $rows = 5): array
+    {
+        $minColumnElements = 1;
+        if(in_array($testMethodName, ['testRewind', 'testFilterByClosure', 'testValid', 'testMerge', 'testCurrent', 'testCount', 'testToArray'])) {
+            $minColumnElements = 0;
+        }
+
         $data = [];
-        for ($i = 0; $i < 5; $i++) {
+        for ($i = 0; $i < $rows; $i++) {
             $data[] = array_map(function ($null) {
-                return $this->getMockForAbstractClass(AbstractComponent::class, [uniqid('name-'), uniqid('symbol-')]);
-            }, array_fill(0, mt_rand(1, 20), null));
+                return $this->getMockForAbstractClass(AbstractComponent::class, [uniqid('name-'), uniqid('symbol-')])->addSymbols(uniqid('symbol-'));
+            }, array_fill(0, mt_rand($minColumnElements, 20), null));
         }
         return $data;
     }
 
     /**
+     * @param string $testMethodName
      * @return AbstractComponent[]
      */
-    public function symbolsIndexedComponentsProvider(): array
+    public function symbolsIndexedComponentsProvider(string $testMethodName = 'yolo'): array
     {
-        $components = $this->componentsProvider();
+        $components = $this->componentsProvider($testMethodName);
         $rowCount = count($components);
         $resortedComponents = [];
         for ($i = 0; $i < $rowCount; $i++) {
-            $resortedComponents[$i] = [];
+            $resortedComponents[$i] = [[]];
             foreach ($components[$i] as $component) {
                 foreach ($component->getSymbols() as $symbol) {
                     $resortedComponents[$i][0][$symbol] = $component;

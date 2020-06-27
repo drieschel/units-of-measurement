@@ -32,7 +32,7 @@ class UnitConverter
         }
 
         if(is_null($units)) {
-            $units = UnitCollection::create();
+            $units = UnitCollection::createAllUnits();
         }
 
         $this->prefixConverter = new SiPrefixConverter($units, $prefixes);

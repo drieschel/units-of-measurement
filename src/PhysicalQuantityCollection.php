@@ -1,9 +1,22 @@
 <?php
 namespace Drieschel\UnitsOfMeasurement;
 
+/**
+ * Class PhysicalQuantityCollection
+ * @package Drieschel\UnitsOfMeasurement
+ *
+ * @method PhysicalQuantity get(string $symbol) : ComponentInterface
+ */
 class PhysicalQuantityCollection extends ComponentCollection
 {
-    public static function create(bool $createUnits = false): self
+    /**
+     * @param bool $createUnits
+     * @param bool $preferUsc
+     * @return PhysicalQuantityCollection
+     * @throws CollectionException
+     * @throws UnitExpressionException
+     */
+    public static function create(bool $createUnits = false, bool $preferUsc = false): self
     {
         $quantities = (new static())
             ->set(new PhysicalQuantity('length', 'l', 'L', true))
@@ -20,7 +33,7 @@ class PhysicalQuantityCollection extends ComponentCollection
         ;
 
         if($createUnits) {
-            UnitCollection::create($quantities);
+            UnitCollection::createAllUnits($quantities, $preferUsc);
         }
 
         return $quantities;

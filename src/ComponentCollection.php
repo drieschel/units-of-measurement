@@ -45,7 +45,7 @@ class ComponentCollection implements \Iterator, \Countable, \ArrayAccess
      */
     public function filterByClosure(\Closure $closure): self
     {
-        return new static(...array_values(array_unique(array_filter($this->components, $closure), \SORT_REGULAR)));
+        return new static(...array_values(array_filter($this->toArray(), $closure)));
     }
 
     /**
@@ -85,7 +85,7 @@ class ComponentCollection implements \Iterator, \Countable, \ArrayAccess
      */
     public function merge(ComponentCollection $collection): self
     {
-        foreach ($collection as $component) {
+        foreach($collection->toArray() as $component) {
             $this->set($component);
         }
         return $this;
@@ -165,6 +165,20 @@ class ComponentCollection implements \Iterator, \Countable, \ArrayAccess
         }
 
         return $this;
+    }
+
+    /**
+     * @return ComponentInterface[]
+     */
+    public function toArray(): array
+    {
+        $components = [];
+        foreach($this->components as $component) {
+            if(!in_array($component, $components, true)) {
+                $components[] = $component;
+            }
+        }
+        return $components;
     }
 
     /**

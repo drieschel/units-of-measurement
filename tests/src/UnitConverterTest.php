@@ -18,7 +18,7 @@ class UnitConverterTest extends TestCase
      */
     public function testConvert(string $fromSymbol, string $toSymbol, float $value, float $expectedResult)
     {
-        $units = UnitCollection::create();
+        $units = UnitCollection::createAllUnits();
         $converter = new UnitConverter($units);
         $actual = $converter->convert($units->get($fromSymbol), $units->get($toSymbol), $value);
         $this->assertEquals($expectedResult, $actual);
@@ -102,7 +102,9 @@ class UnitConverterTest extends TestCase
     public function convertUnitsProvider(): array
     {
         return [
-            ['gal', 'L', 5.1, 19.3056000984],
+            ['US gal', 'L', 5.1, 19.3056000984],
+            ['gal', 'L', 9.423, 42.83780607],
+            ['gal', 'US gal', 2.33, 2.798213326426312],
             ['ft³', 'in³', 1, 1728],
             ['yd³', 'ft³', 1, 27],
             ['mm', 'in', 23.55, 0.92716535433071],
