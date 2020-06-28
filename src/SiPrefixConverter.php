@@ -107,7 +107,11 @@ class SiPrefixConverter
             throw ConverterException::unknownUnitSymbol($unitSymbol);
         }
 
-        if ($prefixSymbol === '' && $unit->isSiPrefixCompatible() && strlen($unit->getSymbol()) > 1) {
+        if($prefixSymbol !== '' && !$unit->isSiPrefixCompatible()) {
+            throw ConverterException::siPrefixIncompatibleUnit($unit->getDefaultSymbol());
+        }
+
+        if ($prefixSymbol === '' && $unit->isSiPrefixCompatible() && strlen($unit->getDefaultSymbol()) > 1) {
             for ($i = 0; $i < $unitSymbolLength; $i++) {
                 $tPrefixSymbol = substr($unitSymbol, 0, $i + 1);
                 if ($this->prefixes->has($tPrefixSymbol)) {

@@ -22,14 +22,14 @@ class Unit extends AbstractComponent
     /**
      * Unit constructor.
      * @param string $name
-     * @param string $symbol
+     * @param string $defaultSymbol
      * @param UnitExpression $unitExpression
      * @param PhysicalQuantity $physicalQuantity
      * @param boolean $siPrefixCompatible
      */
-    public function __construct(string $name, string $symbol, UnitExpression $unitExpression, PhysicalQuantity $physicalQuantity, bool $siPrefixCompatible = false)
+    public function __construct(string $name, string $defaultSymbol, UnitExpression $unitExpression, PhysicalQuantity $physicalQuantity, bool $siPrefixCompatible = false)
     {
-        parent::__construct($name, $symbol);
+        parent::__construct($name, $defaultSymbol);
         $this->unitExpression = $unitExpression;
         $this->physicalQuantity = $physicalQuantity;
         $this->siPrefixCompatible = $siPrefixCompatible;

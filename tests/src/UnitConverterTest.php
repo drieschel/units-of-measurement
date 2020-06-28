@@ -14,7 +14,7 @@ class UnitConverterTest extends TestCase
      * @param float $value
      * @param float $expectedResult
      * @throws CollectionException
-     * @throws ConverterException
+     * @throws ConverterException|UnitExpressionException
      */
     public function testConvert(string $fromSymbol, string $toSymbol, float $value, float $expectedResult)
     {
@@ -60,7 +60,7 @@ class UnitConverterTest extends TestCase
     }
 
     /**
-     * @dataProvider unitSymbolProvider
+     * @dataProvider findUnitBySymbol
      *
      * @param string $unitSymbol
      * @param string $unitName
@@ -107,8 +107,8 @@ class UnitConverterTest extends TestCase
             ['gal', 'US gal', 2.33, 2.798213326426312],
             ['ft³', 'in³', 1, 1728],
             ['yd³', 'ft³', 1, 27],
-            ['mm', 'in', 23.55, 0.92716535433071],
-            ['mi', 'km', 12.5, 20.1168],
+            ['m', 'in', 23.55E-3, 0.92716535433071],
+            ['mi', 'm', 12.5, 20.1168E3],
         ];
     }
 
@@ -122,13 +122,15 @@ class UnitConverterTest extends TestCase
             ['m', 1E0],
             ['Tm', 1E12],
             ['nL', 1E-9],
+            ['km', 1E3],
+            ['daL', 1E1],
         ];
     }
 
     /**
      * @return string[]
      */
-    public function unitSymbolProvider(): array
+    public function findUnitBySymbol(): array
     {
         return [
             ['Tt', 'tonne'],
@@ -136,9 +138,11 @@ class UnitConverterTest extends TestCase
             ['cu yd', 'cubic yard'],
             ['l', 'litre'],
             ['L', 'litre'],
+            ['dL', 'litre'],
             ['kg', 'kilogram'],
             ['g', 'gram'],
-            ['mm', 'millimetre'],
+            ['mg', 'gram'],
+            ['mm', 'metre'],
             ['m', 'metre'],
         ];
     }

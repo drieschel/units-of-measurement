@@ -47,8 +47,18 @@ class SiBaseUnitTerm
      */
     public function isCompatibleWith(SiBaseUnitTerm $unitTerm): bool
     {
-        return $this->baseUnit->getSymbol() === $unitTerm->baseUnit->getSymbol()
-            && $this->baseUnit->getPhysicalQuantity()->getSymbol() === $unitTerm->getBaseUnit()->getPhysicalQuantity()->getSymbol()
+        $symbolFound = false;
+        foreach($this->getBaseUnit()->getAllSymbols() as $thisSymbol) {
+            foreach($unitTerm->getBaseUnit()->getAllSymbols() as $thatSymbol) {
+                if($thisSymbol === $thatSymbol) {
+                    $symbolFound = true;
+                    break;
+                }
+            }
+        }
+
+        return $symbolFound
+            && $this->baseUnit->getPhysicalQuantity()->getDefaultSymbol() === $unitTerm->getBaseUnit()->getPhysicalQuantity()->getDefaultSymbol()
             && $this->exponent === $unitTerm->exponent;
     }
 
@@ -57,7 +67,7 @@ class SiBaseUnitTerm
      */
     public function __toString(): string
     {
-        $part = $this->getBaseUnit()->getSymbol();
+        $part = $this->getBaseUnit()->getDefaultSymbol();
         if ($this->getExponent() !== 1) {
             $part .= sprintf('^%d', $this->getExponent());
         }

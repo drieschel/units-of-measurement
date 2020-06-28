@@ -16,14 +16,14 @@ class PhysicalQuantity extends ComponentCollection implements ComponentInterface
     protected $name;
 
     /**
-     * @var string
+     * @var string[]
      */
-    protected $symbol;
+    protected $symbols;
 
     /**
      * @var string
      */
-    protected $dimensionSymbol;
+    protected $dimension;
 
     /**
      * @var bool
@@ -33,16 +33,30 @@ class PhysicalQuantity extends ComponentCollection implements ComponentInterface
     /**
      * PhysicalQuantity constructor.
      * @param string $name
-     * @param string $symbol
-     * @param string $dimensionSymbol
+     * @param string $defaultSymbol
+     * @param string $dimension
      * @param bool $isBaseQuantity
      */
-    public function __construct(string $name, string $symbol, string $dimensionSymbol, bool $isBaseQuantity = false)
+    public function __construct(string $name, string $defaultSymbol, string $dimension, bool $isBaseQuantity = false)
     {
         $this->name = $name;
-        $this->symbol = $symbol;
-        $this->dimensionSymbol = $dimensionSymbol;
+        $this->symbols[0] = $defaultSymbol;
+        $this->dimension = $dimension;
         $this->isBaseQuantity = $isBaseQuantity;
+    }
+
+    /**
+     * @param string ...$symbols
+     * @return PhysicalQuantity
+     */
+    public function addSymbols(string ...$symbols): self
+    {
+        foreach ($symbols as $symbol) {
+            if (!in_array($symbol, $this->symbols, true)) {
+                $this->symbols[] = $symbol;
+            }
+        }
+        return $this;
     }
 
     /**
@@ -54,19 +68,27 @@ class PhysicalQuantity extends ComponentCollection implements ComponentInterface
     }
 
     /**
-     * @return string
+     * @return string[]
      */
-    public function getSymbol(): string
+    public function getAllSymbols(): array
     {
-        return $this->symbol;
+        return $this->symbols;
     }
 
     /**
      * @return string
      */
-    public function getDimensionSymbol(): string
+    public function getDefaultSymbol(): string
     {
-        return $this->dimensionSymbol;
+        return $this->symbols[0];
+    }
+
+    /**
+     * @return string
+     */
+    public function getDimension(): string
+    {
+        return $this->dimension;
     }
 
     /**

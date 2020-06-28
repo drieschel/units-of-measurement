@@ -17,12 +17,12 @@ class AbstractComponent implements ComponentInterface
     /**
      * AbstractComponent constructor.
      * @param string $name
-     * @param string $symbol
+     * @param string $defaultSymbol
      */
-    public function __construct(string $name, string $symbol)
+    public function __construct(string $name, string $defaultSymbol)
     {
         $this->name = $name;
-        $this->symbols[] = $symbol;
+        $this->symbols[0] = $defaultSymbol;
     }
 
     /**
@@ -36,7 +36,7 @@ class AbstractComponent implements ComponentInterface
     /**
      * @return string
      */
-    public function getSymbol(): string
+    public function getDefaultSymbol(): string
     {
         return $this->symbols[0];
     }
@@ -58,7 +58,7 @@ class AbstractComponent implements ComponentInterface
     /**
      * @return string[]
      */
-    public function getSymbols(): array
+    public function getAllSymbols(): array
     {
         return $this->symbols;
     }

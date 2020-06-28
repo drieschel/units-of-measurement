@@ -13,12 +13,12 @@ class SiPrefix extends AbstractComponent
     /**
      * SiPrefix constructor.
      * @param string $name
-     * @param string $symbol
+     * @param string $defaultSymbol
      * @param float $factor
      */
-    public function __construct(string $name, string $symbol, float $factor)
+    public function __construct(string $name, string $defaultSymbol, float $factor)
     {
-        parent::__construct($name, $symbol);
+        parent::__construct($name, $defaultSymbol);
         $this->factor = $factor;
     }
 

@@ -10,7 +10,12 @@ interface ComponentInterface
     public function getName(): string;
 
     /**
+     * @return string[]
+     */
+    public function getAllSymbols(): array;
+
+    /**
      * @return string
      */
-    public function getSymbol(): string;
+    public function getDefaultSymbol(): string;
 }

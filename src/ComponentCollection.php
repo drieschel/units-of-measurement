@@ -152,12 +152,7 @@ class ComponentCollection implements \Iterator, \Countable, \ArrayAccess
      */
     public function set(ComponentInterface $component): self
     {
-        $symbols = [$component->getSymbol()];
-        if ($component instanceof AbstractComponent) {
-            $symbols = $component->getSymbols();
-        }
-
-        foreach ($symbols as $symbol) {
+        foreach ($component->getAllSymbols() as $symbol) {
             if ($this->has($symbol)) {
                 throw CollectionException::symbolExists($symbol);
             }

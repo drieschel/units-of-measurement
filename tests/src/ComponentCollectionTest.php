@@ -46,7 +46,7 @@ class ComponentCollectionTest extends TestCase
     {
         $collection = new ComponentCollection(...$components);
         foreach ($components as $component) {
-            $this->assertTrue($collection->has($component->getSymbol()));
+            $this->assertTrue($collection->has($component->getDefaultSymbol()));
             $this->assertFalse($collection->has($component->getName()));
         }
     }
@@ -65,7 +65,7 @@ class ComponentCollectionTest extends TestCase
         $secondCollection = new ComponentCollection(...$components);
         $firstCollection->merge($secondCollection);
         foreach ($components as $component) {
-            $this->assertTrue($firstCollection->has($component->getSymbol()));
+            $this->assertTrue($firstCollection->has($component->getDefaultSymbol()));
         }
         $this->assertEquals($secondCollection->count() + $firstColCntBeforeMerge, $firstCollection->count());
     }
@@ -80,9 +80,9 @@ class ComponentCollectionTest extends TestCase
     {
         $collection = new ComponentCollection();
         foreach ($components as $component) {
-            $this->assertFalse($collection->has($component->getSymbol()));
+            $this->assertFalse($collection->has($component->getDefaultSymbol()));
             $collection->set($component);
-            $this->assertTrue($collection->has($component->getSymbol()));
+            $this->assertTrue($collection->has($component->getDefaultSymbol()));
         }
     }
 
@@ -101,12 +101,14 @@ class ComponentCollectionTest extends TestCase
 
     public function testSetComponentInterface()
     {
-        $symbol = uniqid('symbol-');
+        $symbol1 = uniqid('symbol1-');
+        $symbol2 = uniqid('symbol2-');
         $collection = new ComponentCollection();
         $component = $this->createMock(ComponentInterface::class);
-        $component->expects($this->any())->method('getSymbol')->willReturn($symbol);
+        $component->expects($this->any())->method('getAllSymbols')->willReturn([$symbol1, $symbol2]);
         $collection->set($component);
-        $this->assertEquals($component, $collection->get($symbol));
+        $this->assertEquals($component, $collection->get($symbol1));
+        $this->assertEquals($component, $collection->get($symbol2));
     }
 
     public function testSetSymbolExists()
@@ -159,13 +161,13 @@ class ComponentCollectionTest extends TestCase
         $collection = new ComponentCollection(...$allComponents);
 
         $closure = function (AbstractComponent $component) {
-            return substr($component->getSymbol(), 0, 6) === 'foobar';
+            return substr($component->getDefaultSymbol(), 0, 6) === 'foobar';
         };
 
         $filteredCollection = $collection->filterByClosure($closure);
         $this->assertCount(count($componentsToFilter), $filteredCollection);
         foreach ($componentsToFilter as $component) {
-            $this->assertTrue($filteredCollection->has($component->getSymbol()));
+            $this->assertTrue($filteredCollection->has($component->getDefaultSymbol()));
         }
     }
 
@@ -200,7 +202,7 @@ class ComponentCollectionTest extends TestCase
     {
         $collection = new ComponentCollection(...$components);
         foreach ($components as $component) {
-            foreach ($component->getSymbols() as $symbol) {
+            foreach ($component->getAllSymbols() as $symbol) {
                 $this->assertEquals($component, $collection->get($symbol));
             }
         }
@@ -224,7 +226,7 @@ class ComponentCollectionTest extends TestCase
     {
         $collection = new ComponentCollection(...$components);
         foreach ($components as $component) {
-            foreach ($component->getSymbols() as $symbol) {
+            foreach ($component->getAllSymbols() as $symbol) {
                 $this->assertEquals($symbol, $collection->key());
                 $collection->next();
             }
@@ -257,7 +259,7 @@ class ComponentCollectionTest extends TestCase
     {
         $collection = new ComponentCollection(...$components);
         foreach ($components as $component) {
-            $this->assertTrue($collection->offsetExists($component->getSymbol()));
+            $this->assertTrue($collection->offsetExists($component->getDefaultSymbol()));
             $this->assertFalse($collection->offsetExists($component->getName()));
         }
     }
@@ -272,7 +274,7 @@ class ComponentCollectionTest extends TestCase
     {
         $collection = new ComponentCollection(...$components);
         foreach ($components as $component) {
-            foreach ($component->getSymbols() as $symbol) {
+            foreach ($component->getAllSymbols() as $symbol) {
                 $this->assertEquals($component, $collection->offsetGet($symbol));
             }
         }
@@ -293,7 +295,7 @@ class ComponentCollectionTest extends TestCase
         $reflComponents = $reflClass->getProperty('components');
         $reflComponents->setAccessible(true);
         foreach ($components as $component) {
-            foreach ($component->getSymbols() as $offset) {
+            foreach ($component->getAllSymbols() as $offset) {
                 $collection->offsetSet($offset, 'wtf');
                 $components = $reflComponents->getValue($collection);
                 $this->assertEquals($components[$offset], $component);
@@ -315,7 +317,7 @@ class ComponentCollectionTest extends TestCase
         $reflComponents = $reflClass->getProperty('components');
         $reflComponents->setAccessible(true);
         foreach ($components as $component) {
-            foreach ($component->getSymbols() as $offset) {
+            foreach ($component->getAllSymbols() as $offset) {
                 $collection->offsetUnset($offset);
                 $components = $reflComponents->getValue($collection);
                 $this->assertEquals($components[$offset], $component);
@@ -365,7 +367,7 @@ class ComponentCollectionTest extends TestCase
         for ($i = 0; $i < $rowCount; $i++) {
             $resortedComponents[$i] = [[]];
             foreach ($components[$i] as $component) {
-                foreach ($component->getSymbols() as $symbol) {
+                foreach ($component->getAllSymbols() as $symbol) {
                     $resortedComponents[$i][0][$symbol] = $component;
                 }
             }

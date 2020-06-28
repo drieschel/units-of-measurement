@@ -67,7 +67,7 @@ class SiPrefixConverterTest extends TestCase
     {
         $converter = new SiPrefixConverter();
         $prefix = $converter->findPrefixByUnitSymbol($unitSymbol);
-        $this->assertEquals($expectedPrefixSymbol, $prefix->getSymbol());
+        $this->assertEquals($expectedPrefixSymbol, $prefix->getDefaultSymbol());
     }
 
     /**
@@ -84,11 +84,31 @@ class SiPrefixConverterTest extends TestCase
         (new SiPrefixConverter())->findPrefixByUnitSymbol($unknownUnitSymbol);
     }
 
-    public function testFindPrefixByUnitSymbolMissingUnitSymbol()
+    /**
+     * @dataProvider unknownUnitsDataProvider
+     *
+     * @param string $unitSymbol
+     * @throws CollectionException
+     * @throws ConverterException
+     */
+    public function testFindPrefixByUnitSymbolSiPrefixIncompatibleUnit(string $unitSymbol)
     {
         $this->expectException(ConverterException::class);
-        $this->expectExceptionCode(ConverterException::MISSING_UNIT_SYMBOL);
-        (new SiPrefixConverter())->findPrefixByUnitSymbol('');
+        $this->expectExceptionCode(ConverterException::UNKNOWN_UNIT_SYMBOL);
+        (new SiPrefixConverter())->findPrefixByUnitSymbol($unitSymbol);
+    }
+
+    /**
+     * @dataProvider prefixIncompatibleUnitsProvider
+     *
+     * @throws CollectionException
+     * @throws ConverterException
+     */
+    public function testFindPrefixByUnitSymbolMissingUnitSymbol(string $unitSymbol)
+    {
+        $this->expectException(ConverterException::class);
+        $this->expectExceptionCode(ConverterException::SI_PREFIX_INCOMPATIBLE_UNIT);
+        (new SiPrefixConverter())->findPrefixByUnitSymbol($unitSymbol);
     }
 
     /**
@@ -169,7 +189,16 @@ class SiPrefixConverterTest extends TestCase
         return [
             ['_'],
             ['maaaa'],
-            ['GT'],
+            ['a'],
+            ['ma'],
+        ];
+    }
+
+    public function prefixIncompatibleUnitsProvider(): array
+    {
+        return [
+            ['min'],
+            ['kpt'],
         ];
     }
 

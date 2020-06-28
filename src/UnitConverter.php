@@ -106,7 +106,7 @@ class UnitConverter
         $this->prefixConverter->findPrefixByUnitSymbol($unitSymbol);
         $unitSymbolLength = strlen($unitSymbol);
 
-        for ($i = 0; $i < $unitSymbolLength && $i < 2; $i++) {
+        for ($i = 0; $i < $unitSymbolLength && $i < 3; $i++) {
             if ($this->units->has(substr($unitSymbol, $i))) {
                 return $this->units->get(substr($unitSymbol, $i));
             }
