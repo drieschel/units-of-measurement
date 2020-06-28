@@ -73,25 +73,11 @@ class SiPrefixConverterTest extends TestCase
     /**
      * @dataProvider unknownUnitsDataProvider
      *
-     * @param string $unknownUnitSymbol
-     * @throws CollectionException
-     * @throws ConverterException
-     */
-    public function testFindPrefixByUnitSymbolUnknownUnitSymbol(string $unknownUnitSymbol)
-    {
-        $this->expectException(ConverterException::class);
-        $this->expectExceptionCode(ConverterException::UNKNOWN_UNIT_SYMBOL);
-        (new SiPrefixConverter())->findPrefixByUnitSymbol($unknownUnitSymbol);
-    }
-
-    /**
-     * @dataProvider unknownUnitsDataProvider
-     *
      * @param string $unitSymbol
      * @throws CollectionException
      * @throws ConverterException
      */
-    public function testFindPrefixByUnitSymbolSiPrefixIncompatibleUnit(string $unitSymbol)
+    public function testFindPrefixByUnitSymbolUnknownUnitSymbol(string $unitSymbol)
     {
         $this->expectException(ConverterException::class);
         $this->expectExceptionCode(ConverterException::UNKNOWN_UNIT_SYMBOL);
@@ -101,14 +87,26 @@ class SiPrefixConverterTest extends TestCase
     /**
      * @dataProvider prefixIncompatibleUnitsProvider
      *
+     * @param string $unitSymbol
      * @throws CollectionException
      * @throws ConverterException
      */
-    public function testFindPrefixByUnitSymbolMissingUnitSymbol(string $unitSymbol)
+    public function testFindPrefixByUnitSymbolSiPrefixIncompatibleUnit(string $unitSymbol)
     {
         $this->expectException(ConverterException::class);
         $this->expectExceptionCode(ConverterException::SI_PREFIX_INCOMPATIBLE_UNIT);
         (new SiPrefixConverter())->findPrefixByUnitSymbol($unitSymbol);
+    }
+
+    /**
+     * @throws CollectionException
+     * @throws ConverterException
+     */
+    public function testFindPrefixByUnitSymbolMissingUnitSymbol()
+    {
+        $this->expectException(ConverterException::class);
+        $this->expectExceptionCode(ConverterException::MISSING_UNIT_SYMBOL);
+        (new SiPrefixConverter())->findPrefixByUnitSymbol('');
     }
 
     /**
