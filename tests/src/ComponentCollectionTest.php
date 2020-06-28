@@ -2,7 +2,6 @@
 
 namespace Drieschel\UnitsOfMeasurement;
 
-use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 
 class ComponentCollectionTest extends TestCase
@@ -341,7 +340,7 @@ class ComponentCollectionTest extends TestCase
     public function componentsProvider(string $testMethodName = 'yolo', $rows = 5): array
     {
         $minColumnElements = 1;
-        if(in_array($testMethodName, ['testRewind', 'testFilterByClosure', 'testValid', 'testMerge', 'testCurrent', 'testCount', 'testToArray'])) {
+        if (in_array($testMethodName, ['testRewind', 'testFilterByClosure', 'testValid', 'testMerge', 'testCurrent', 'testCount', 'testToArray'], true)) {
             $minColumnElements = 0;
         }
 

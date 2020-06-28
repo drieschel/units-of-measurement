@@ -2,6 +2,12 @@
 
 namespace Drieschel\UnitsOfMeasurement;
 
+/**
+ * Class PhysicalQuantity
+ * @package Drieschel\UnitsOfMeasurement
+ *
+ * @method Unit get(string $symbol)
+ */
 class PhysicalQuantity extends ComponentCollection implements ComponentInterface
 {
     /**

@@ -5,7 +5,7 @@ namespace Drieschel\UnitsOfMeasurement;
  * Class PhysicalQuantityCollection
  * @package Drieschel\UnitsOfMeasurement
  *
- * @method PhysicalQuantity get(string $symbol) : ComponentInterface
+ * @method PhysicalQuantity get(string $symbol)
  */
 class PhysicalQuantityCollection extends ComponentCollection
 {
@@ -32,7 +32,7 @@ class PhysicalQuantityCollection extends ComponentCollection
             ->set(new PhysicalQuantity('molar concentration', 'C', 'L⁻³ N'))
         ;
 
-        if($createUnits) {
+        if ($createUnits) {
             UnitCollection::createAllUnits($quantities, $preferUsc);
         }
 

@@ -27,11 +27,11 @@ class UnitConverter
      */
     public function __construct(UnitCollection $units = null, SiPrefixCollection $prefixes = null)
     {
-        if(is_null($prefixes)) {
+        if (is_null($prefixes)) {
             $prefixes = SiPrefixCollection::create();
         }
 
-        if(is_null($units)) {
+        if (is_null($units)) {
             $units = UnitCollection::createAllUnits();
         }
 
@@ -106,8 +106,8 @@ class UnitConverter
         $this->prefixConverter->findPrefixByUnitSymbol($unitSymbol);
         $unitSymbolLength = strlen($unitSymbol);
 
-        for($i = 0; $i < $unitSymbolLength && $i < 2; $i++) {
-            if($this->units->has(substr($unitSymbol, $i))) {
+        for ($i = 0; $i < $unitSymbolLength && $i < 2; $i++) {
+            if ($this->units->has(substr($unitSymbol, $i))) {
                 return $this->units->get(substr($unitSymbol, $i));
             }
         }

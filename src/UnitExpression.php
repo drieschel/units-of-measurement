@@ -23,7 +23,7 @@ class UnitExpression
      */
     public function __construct(float $factor = 1., SiBaseUnitTerm $firstTerm, SiBaseUnitTerm ...$moreTerms)
     {
-        if($factor === 0.) {
+        if ($factor === 0.) {
             throw UnitExpressionException::invalidFactor($factor);
         }
 

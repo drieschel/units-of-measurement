@@ -85,7 +85,7 @@ class ComponentCollection implements \Iterator, \Countable, \ArrayAccess
      */
     public function merge(ComponentCollection $collection): self
     {
-        foreach($collection->toArray() as $component) {
+        foreach ($collection->toArray() as $component) {
             $this->set($component);
         }
         return $this;
@@ -173,8 +173,8 @@ class ComponentCollection implements \Iterator, \Countable, \ArrayAccess
     public function toArray(): array
     {
         $components = [];
-        foreach($this->components as $component) {
-            if(!in_array($component, $components, true)) {
+        foreach ($this->components as $component) {
+            if (!in_array($component, $components, true)) {
                 $components[] = $component;
             }
         }

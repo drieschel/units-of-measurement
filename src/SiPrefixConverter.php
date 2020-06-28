@@ -89,14 +89,14 @@ class SiPrefixConverter
     {
         $unitSymbolLength = strlen($unitSymbol);
 
-        if($unitSymbolLength === 0) {
+        if ($unitSymbolLength === 0) {
             throw ConverterException::missingUnitSymbol();
         }
 
         $unit = null;
         $prefixSymbol = null;
-        for($i = 0; $i < $unitSymbolLength && $i < 3; $i++) {
-            if($this->units->has(substr($unitSymbol, $i))) {
+        for ($i = 0; $i < $unitSymbolLength && $i < 3; $i++) {
+            if ($this->units->has(substr($unitSymbol, $i))) {
                 $unit = $this->units->get(substr($unitSymbol, $i));
                 $prefixSymbol = substr($unitSymbol, 0, $i);
                 break;
@@ -107,10 +107,10 @@ class SiPrefixConverter
             throw ConverterException::unknownUnitSymbol($unitSymbol);
         }
 
-        if($prefixSymbol === '' && $unit->isSiPrefixCompatible() && strlen($unit->getSymbol()) > 1) {
-            for($i = 0; $i < $unitSymbolLength; $i++) {
+        if ($prefixSymbol === '' && $unit->isSiPrefixCompatible() && strlen($unit->getSymbol()) > 1) {
+            for ($i = 0; $i < $unitSymbolLength; $i++) {
                 $tPrefixSymbol = substr($unitSymbol, 0, $i + 1);
-                if($this->prefixes->has($tPrefixSymbol)) {
+                if ($this->prefixes->has($tPrefixSymbol)) {
                     return $this->prefixes->get($tPrefixSymbol);
                 }
             }

@@ -6,7 +6,7 @@ namespace Drieschel\UnitsOfMeasurement;
  * Class UnitCollection
  * @package Drieschel\UnitsOfMeasure
  *
- * @method NonSiUnit|SiBaseUnit|SiDerivedUnit get(string $symbol)
+ * @method Unit get(string $symbol)
  */
 class UnitCollection extends ComponentCollection
 {
@@ -47,12 +47,6 @@ class UnitCollection extends ComponentCollection
             return $unit->isSiPrefixCompatible();
         });
     }
-
-    public function set(ComponentInterface $component): ComponentCollection
-    {
-        return parent::set($component);
-    }
-
 
     /**
      * @param PhysicalQuantityCollection|null $physicalQuantities
@@ -148,7 +142,6 @@ class UnitCollection extends ComponentCollection
             ->set((new NonSiUnit(sprintf('%sdry pint', $uscPrefix), 'dry pt', new UnitExpression(473.176473E-6, new SiBaseUnitTerm($siBaseUnits->get('m'), 3)), $physicalQuantities->get('V')))->addSymbols('US dry pt'))
             ->set(new NonSiUnit('chain', 'ch', new UnitExpression(20.1168, new SiBaseUnitTerm($siBaseUnits->get('m'))), $physicalQuantities->get('l')))
             ;
-
     }
 
     /**
