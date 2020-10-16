@@ -25,7 +25,8 @@ class Unit extends AbstractComponent
      * @param string $defaultSymbol
      * @param UnitExpression $unitExpression
      * @param PhysicalQuantity $physicalQuantity
-     * @param boolean $siPrefixCompatible
+     * @param bool $siPrefixCompatible
+     * @throws CollectionException
      */
     public function __construct(string $name, string $defaultSymbol, UnitExpression $unitExpression, PhysicalQuantity $physicalQuantity, bool $siPrefixCompatible = false)
     {

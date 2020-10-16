@@ -16,5 +16,4 @@ class SiDerivedUnit extends Unit
     {
         parent::__construct($name, $defaultSymbol, $unitExpression, $physicalQuantity, $siPrefixCompatible);
     }
-
 }

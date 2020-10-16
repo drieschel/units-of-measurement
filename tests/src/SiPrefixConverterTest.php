@@ -13,7 +13,7 @@ class SiPrefixConverterTest extends TestCase
      * @param string $toPrefix
      * @param float $value
      * @param float $expectedResult
-     * @throws CollectionException
+     * @throws CollectionException|UnitExpressionException
      */
     public function testConvert(string $fromPrefix, string $toPrefix, float $value, float $expectedResult)
     {
@@ -21,7 +21,7 @@ class SiPrefixConverterTest extends TestCase
         $converter = new SiPrefixConverter(null, $prefixes);
         $fromPrefix = $prefixes->get($fromPrefix);
         $toPrefix = $prefixes->get($toPrefix);
-        $result = $converter->convert($fromPrefix, $toPrefix, $value);
+        $result = $converter->convertByPrefix($fromPrefix, $toPrefix, $value);
         $this->assertEquals($expectedResult, $result);
     }
 
@@ -124,6 +124,19 @@ class SiPrefixConverterTest extends TestCase
     }
 
     /**
+     * @dataProvider conversionExponentProvider
+     *
+     * @param int $fromExponent
+     * @param int $toExponent
+     * @param $expectedExponent
+     */
+    public function testDetermineConversionExponent(int $fromExponent, int $toExponent, $expectedExponent)
+    {
+        $actualExponent = (new SiPrefixConverter())->determineConversionExponent($fromExponent, $toExponent);
+        return $this->assertEquals($expectedExponent, $actualExponent);
+    }
+
+    /**
      * @return array|array[]
      */
     public function convertByPrefixSymbolsProvider(): array
@@ -157,6 +170,9 @@ class SiPrefixConverterTest extends TestCase
             ['cm', 'da', 6, 6E-3],
             ['g', 'm', 4.1, 4.1E3],
             ['L', 'd', 99.3, 993],
+            ['dm²', 'da', 12, 12E-4],
+            ['m³', 'm', 3, 3E9],
+            ['m³', 'k', 3E9, 3],
         ];
     }
 
@@ -210,6 +226,22 @@ class SiPrefixConverterTest extends TestCase
             ['iL'],
             ['xg'],
             ['qA'],
+        ];
+    }
+
+    /**
+     * @return integer[]
+     */
+    public function conversionExponentProvider(): array
+    {
+        return [
+            [0, 0, 0],
+            [1, 1, 0],
+            [-1, -1, 0],
+            [0, -1, 1],
+            [0, 1, -1],
+            [-1, 1, -2],
+            [1, -1, 2],
         ];
     }
 }

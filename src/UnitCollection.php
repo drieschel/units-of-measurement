@@ -112,6 +112,8 @@ class UnitCollection extends ComponentCollection
             ->set(new SiDerivedUnit('siemens', 'S', new UnitExpression(1., new SiBaseUnitTerm($siBaseUnits->get('kg'), -1), new SiBaseUnitTerm($siBaseUnits->get('m'), -2), new SiBaseUnitTerm($siBaseUnits->get('s'), 3), new SiBaseUnitTerm($siBaseUnits->get('A'), 2)), $physicalQuantities->get('G')))
             ->set(new SiDerivedUnit('weber', 'Wb', new UnitExpression(1., new SiBaseUnitTerm($siBaseUnits->get('kg')), new SiBaseUnitTerm($siBaseUnits->get('m'), 2), new SiBaseUnitTerm($siBaseUnits->get('s'), -2), new SiBaseUnitTerm($siBaseUnits->get('A'), -1)), $physicalQuantities->get('Φ')))
             ->set(new SiDerivedUnit('tesla', 'T', new UnitExpression(1., new SiBaseUnitTerm($siBaseUnits->get('kg')), new SiBaseUnitTerm($siBaseUnits->get('s'), -2), new SiBaseUnitTerm($siBaseUnits->get('A'), -1)), $physicalQuantities->get('B')))
+            ->set((new SiDerivedUnit('square metre', 'm²', new UnitExpression(1., new SiBaseUnitTerm($siBaseUnits->get('m'), 2)), $physicalQuantities->get('A')))->addSymbols('m^2'))
+            ->set((new SiDerivedUnit('cubic metre', 'm³', new UnitExpression(1., new SiBaseUnitTerm($siBaseUnits->get('m'), 3)), $physicalQuantities->get('V')))->addSymbols('m^3'))
             //->set((new SiDerivedUnit('mole per cubic metre', 'mol/m³', new UnitExpression(1., new SiBaseUnitTerm($siBaseUnits->get('mol')), new SiBaseUnitTerm($siBaseUnits->get('m'), -3)), $physicalQuantities->get('C')))->addSymbols('mol/m^3'))
         ;
     }
@@ -130,15 +132,15 @@ class UnitCollection extends ComponentCollection
         $uscPrefix = $preferUsc ? '' : 'US ';
 
         return (new static())
-            ->set((new NonSiUnit('litre', 'L', new UnitExpression(1.E-3, new SiBaseUnitTerm($siBaseUnits->get('m'), 3)), $physicalQuantities->get('V'), true))->addSymbols('l'))
+            ->set((new NonSiUnit('litre', 'L', new UnitExpression(1.E-3, new SiBaseUnitTerm($siBaseUnits->get('m'), 3)), $physicalQuantities->get('V'), true, true))->addSymbols('l'))
             ->set(new NonSiUnit('foot', 'ft', new UnitExpression(0.3048, new SiBaseUnitTerm($siBaseUnits->get('m'))), $physicalQuantities->get('l')), true)
             ->set((new NonSiUnit('inch', 'in', new UnitExpression(25.4E-3, new SiBaseUnitTerm($siBaseUnits->get('m'))), $physicalQuantities->get('l')))->addSymbols('″'))
             ->set(new NonSiUnit('yard', 'yd', new UnitExpression(0.9144, new SiBaseUnitTerm($siBaseUnits->get('m'))), $physicalQuantities->get('l')))
             ->set(new NonSiUnit('mile', 'mi', new UnitExpression(1609.344, new SiBaseUnitTerm($siBaseUnits->get('m'))), $physicalQuantities->get('l')))
             ->set(new NonSiUnit('tonne', 't', new UnitExpression(1.E3, new SiBaseUnitTerm($siBaseUnits->get('kg'))), $physicalQuantities->get('m'), true))
-            ->set((new NonSiUnit('cubic inch', 'in³', new UnitExpression(16.387064E-6, new SiBaseUnitTerm($siBaseUnits->get('m'), 3)), $physicalQuantities->get('V')))->addSymbols('cu in'))
+            ->set((new NonSiUnit('cubic inch', 'in³', new UnitExpression(1.6387064E-5, new SiBaseUnitTerm($siBaseUnits->get('m'), 3)), $physicalQuantities->get('V')))->addSymbols('cu in'))
             ->set((new NonSiUnit('cubic yard', 'yd³', new UnitExpression(0.764554857984, new SiBaseUnitTerm($siBaseUnits->get('m'), 3)), $physicalQuantities->get('V')))->addSymbols('cu yd'))
-            ->set((new NonSiUnit('cubic foot', 'ft³', new UnitExpression(28.316846592E-3, new SiBaseUnitTerm($siBaseUnits->get('m'), 3)), $physicalQuantities->get('V')))->addSymbols('cu ft'))
+            ->set((new NonSiUnit('cubic foot', 'ft³', new UnitExpression(0.028316846592, new SiBaseUnitTerm($siBaseUnits->get('m'), 3)), $physicalQuantities->get('V')))->addSymbols('cu ft'))
             ->set(new NonSiUnit(sprintf('%sgallon', $impPrefix), sprintf('%sgal', $impPrefix), new UnitExpression(4.54609E-3, new SiBaseUnitTerm($siBaseUnits->get('m'), 3)), $physicalQuantities->get('V')))
             ->set(new NonSiUnit(sprintf('%sgallon', $uscPrefix), sprintf('%sgal', $uscPrefix), new UnitExpression(3.785411784E-3, new SiBaseUnitTerm($siBaseUnits->get('m'), 3)), $physicalQuantities->get('V')))
             ->set(new NonSiUnit(sprintf('%sfluid ounce', $impPrefix), sprintf('%sfl oz', $impPrefix), new UnitExpression(28.41306E-6, new SiBaseUnitTerm($siBaseUnits->get('m'), 3)), $physicalQuantities->get('V')))

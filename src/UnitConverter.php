@@ -23,9 +23,11 @@ class UnitConverter
      * UnitConverter constructor.
      * @param UnitCollection|null $units
      * @param SiPrefixCollection|null $prefixes
+     * @param SiPrefixConverter|null $prefixConverter
      * @throws CollectionException
+     * @throws UnitExpressionException
      */
-    public function __construct(UnitCollection $units = null, SiPrefixCollection $prefixes = null)
+    public function __construct(UnitCollection $units = null, SiPrefixCollection $prefixes = null, SiPrefixConverter $prefixConverter = null)
     {
         if (is_null($prefixes)) {
             $prefixes = SiPrefixCollection::create();
@@ -35,7 +37,11 @@ class UnitConverter
             $units = UnitCollection::createAllUnits();
         }
 
-        $this->prefixConverter = new SiPrefixConverter($units, $prefixes);
+        if (is_null($prefixConverter)) {
+            $prefixConverter = new SiPrefixConverter($units, $prefixes, $this);
+        }
+
+        $this->prefixConverter = $prefixConverter;
         $this->prefixes = $prefixes;
         $this->units = $units;
     }

@@ -15,12 +15,19 @@ class SiPrefixConverter
     protected $units;
 
     /**
-     * SiPrefixValueConverter constructor.
+     * @var UnitConverter
+     */
+    protected $unitConverter;
+
+    /**
+     * SiPrefixConverter constructor.
      * @param UnitCollection|null $units
      * @param SiPrefixCollection|null $prefixes
+     * @param UnitConverter|null $unitConverter
      * @throws CollectionException
+     * @throws UnitExpressionException
      */
-    public function __construct(UnitCollection $units = null, SiPrefixCollection $prefixes = null)
+    public function __construct(UnitCollection $units = null, SiPrefixCollection $prefixes = null, UnitConverter $unitConverter = null)
     {
         if (is_null($prefixes)) {
             $prefixes = SiPrefixCollection::create();
@@ -30,6 +37,11 @@ class SiPrefixConverter
             $units = UnitCollection::createAllUnits();
         }
 
+        if (is_null($unitConverter)) {
+            $unitConverter = new UnitConverter($units, $prefixes, $this);
+        }
+
+        $this->unitConverter = $unitConverter;
         $this->prefixes = $prefixes;
         $this->units = $units;
     }
@@ -40,18 +52,11 @@ class SiPrefixConverter
      * @param float $value
      * @return float
      */
-    public function convert(SiPrefix $fromPrefix, SiPrefix $toPrefix, float $value): float
+    public function convertByPrefix(SiPrefix $fromPrefix, SiPrefix $toPrefix, float $value): float
     {
-        $fromFactor = $fromPrefix->getFactor();
-        $toFactor = $toPrefix->getFactor();
+        $exponent = $this->determineConversionExponent($fromPrefix->getExponent(), $toPrefix->getExponent());
 
-        if ($fromFactor < 0. && $toFactor > 0.) {
-            return $value / $fromFactor;
-        } elseif ($fromFactor > 0. && $toFactor < 0.) {
-            return $value * $fromFactor;
-        }
-
-        return $fromFactor / $toFactor * $value;
+        return $value * pow(10, $exponent);
     }
 
     /**
@@ -61,9 +66,9 @@ class SiPrefixConverter
      * @return float
      * @throws CollectionException
      */
-    public function convertByPrefixSymbol(string $fromPrefixSymbol, string $toPrefixSymbol, float $value): float
+    public function convertByPrefixSymbol(string $fromPrefixSymbol, string $toPrefixSymbol, float $value = 1.): float
     {
-        return $this->convert($this->prefixes->get($fromPrefixSymbol), $this->prefixes->get($toPrefixSymbol), $value);
+        return $this->convertByPrefix($this->prefixes->get($fromPrefixSymbol), $this->prefixes->get($toPrefixSymbol), $value);
     }
 
     /**
@@ -74,9 +79,34 @@ class SiPrefixConverter
      * @throws CollectionException
      * @throws ConverterException
      */
-    public function convertByUnitSymbol(string $fromUnitSymbol, string $toPrefixSymbol, float $value): float
+    public function convertByUnitSymbol(string $fromUnitSymbol, string $toPrefixSymbol, float $value = 1.): float
     {
-        return $this->convert($this->findPrefixByUnitSymbol($fromUnitSymbol), $this->prefixes->get($toPrefixSymbol), $value);
+        $unit = $this->unitConverter->findUnitBySymbol($fromUnitSymbol);
+        $fromPrefix = $this->findPrefixByUnitSymbol($fromUnitSymbol);
+        $toPrefix = $this->prefixes->get($toPrefixSymbol);
+
+        if ($unit instanceof NonSiUnit && $unit->isAcceptedForUseWithSi()) {
+            return $this->convertByPrefix($fromPrefix, $toPrefix, $value);
+        }
+
+        $dimension = 0;
+        foreach ($unit->getUnitExpression()->getTerms() as $term) {
+            $dimension += $term->getExponent();
+        }
+
+        $exponent = $this->determineConversionExponent($fromPrefix->getExponent(), $toPrefix->getExponent());
+
+        return $value * pow(10, ($exponent * $dimension));
+    }
+
+    /**
+     * @param float $fromExponent
+     * @param float $toExponent
+     * @return float
+     */
+    public function determineConversionExponent(float $fromExponent, float $toExponent): float
+    {
+        return $fromExponent - $toExponent;
     }
 
     /**
@@ -107,14 +137,15 @@ class SiPrefixConverter
             throw ConverterException::unknownUnitSymbol($unitSymbol);
         }
 
-        if($prefixSymbol !== '' && !$unit->isSiPrefixCompatible()) {
+        if ($prefixSymbol !== '' && !$unit->isSiPrefixCompatible()) {
             throw ConverterException::siPrefixIncompatibleUnit($unit->getDefaultSymbol());
         }
 
         if ($prefixSymbol === '' && $unit->isSiPrefixCompatible() && strlen($unit->getDefaultSymbol()) > 1) {
             for ($i = 0; $i < $unitSymbolLength; $i++) {
                 $tPrefixSymbol = substr($unitSymbol, 0, $i + 1);
-                if ($this->prefixes->has($tPrefixSymbol)) {
+                $tUnitSymbol = substr($unitSymbol, $i + 1);
+                if ($this->prefixes->has($tPrefixSymbol) && $this->units->has($tUnitSymbol)) {
                     return $this->prefixes->get($tPrefixSymbol);
                 }
             }

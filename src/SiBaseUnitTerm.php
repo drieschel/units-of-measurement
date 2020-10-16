@@ -48,9 +48,9 @@ class SiBaseUnitTerm
     public function isCompatibleWith(SiBaseUnitTerm $unitTerm): bool
     {
         $symbolFound = false;
-        foreach($this->getBaseUnit()->getAllSymbols() as $thisSymbol) {
-            foreach($unitTerm->getBaseUnit()->getAllSymbols() as $thatSymbol) {
-                if($thisSymbol === $thatSymbol) {
+        foreach ($this->getBaseUnit()->getAllSymbols() as $thisSymbol) {
+            foreach ($unitTerm->getBaseUnit()->getAllSymbols() as $thatSymbol) {
+                if ($thisSymbol === $thatSymbol) {
                     $symbolFound = true;
                     break;
                 }

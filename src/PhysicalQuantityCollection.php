@@ -26,6 +26,7 @@ class PhysicalQuantityCollection extends ComponentCollection
             ->set(new PhysicalQuantity('temperature', 'T', 'Θ', true))
             ->set(new PhysicalQuantity('amount of substance', 'n', 'N', true))
             ->set(new PhysicalQuantity('luminous intensity', 'L', 'J', true))
+            ->set(new PhysicalQuantity('area', 'A', 'L²'))
             ->set(new PhysicalQuantity('volume', 'V', 'L³'))
             ->set(new PhysicalQuantity('frequency', 'f', 'T⁻¹'))
             //->set(new PhysicalQuantity('molar concentration', 'C', 'L⁻³N'))

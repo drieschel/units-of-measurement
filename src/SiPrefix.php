@@ -6,20 +6,28 @@ namespace Drieschel\UnitsOfMeasurement;
 class SiPrefix extends AbstractComponent
 {
     /**
-     * @var float
+     * @var int
      */
-    protected $factor;
+    protected $exponent;
 
     /**
      * SiPrefix constructor.
      * @param string $name
      * @param string $defaultSymbol
-     * @param float $factor
+     * @param int $exponent
      */
-    public function __construct(string $name, string $defaultSymbol, float $factor)
+    public function __construct(string $name, string $defaultSymbol, int $exponent)
     {
         parent::__construct($name, $defaultSymbol);
-        $this->factor = $factor;
+        $this->exponent = $exponent;
+    }
+
+    /**
+     * @return int
+     */
+    public function getExponent(): int
+    {
+        return $this->exponent;
     }
 
     /**
@@ -27,6 +35,6 @@ class SiPrefix extends AbstractComponent
      */
     public function getFactor(): float
     {
-        return $this->factor;
+        return pow(10, $this->exponent);
     }
 }
