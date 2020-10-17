@@ -52,14 +52,14 @@ Collections of units can be created by using static factory methods from the uni
 ```php
 <?php
 use Drieschel\UnitsOfMeasurement\UnitCollection;
-use Drieschel\UnitsOfMeasurement\PhysicalQuantitiesCollection;
+use Drieschel\UnitsOfMeasurement\PhysicalQuantityCollection;
 
 // Create all defined units. If the US Customary system is preferred over the
 // Imperial unit system, then the second (optional) argument has to be set to true.    
 // It doesn't matter which system is preferred. Both unit versions (Imperial and USC)
 // will be created every time, the preferred version just has no unit system prefix 
 // in the symbol.
-$physicalQuantities = PhysicalQuantitiesCollection::create();
+$physicalQuantities = PhysicalQuantityCollection::create();
 $preferUsc = true;
 $units = UnitCollection::createAllUnits($physicalQuantities, $preferUsc);
 
